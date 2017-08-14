@@ -1,0 +1,44 @@
+# application
+
+app.module=wsgi
+app.port=8080
+app.debug=true
+app.testing=false
+app.flask_app=
+app.secret_key=
+
+app.hostname=
+
+# wtf forms
+
+app.uploaded_images_dest=
+app.uploaded_video_dest=
+app.uploads_default_dest=
+app.uploaded_video_url=
+app.video_output_dest=
+
+# database
+
+db.name=postgres
+db.pass=
+db.port=
+db.service=
+db.user=
+
+# ffmpeg
+
+ffmpeg.bin=
+ffmpeg.ffprobe_bin=
+ffmpeg_file_folder=
+
+# ssh
+
+ssh.server=
+ssh.username=
+ssh.pass=
+
+auth.cern_oauth_client_id=
+auth.cern_oauth_client_secret=
+
+mail.hostname=
+mail.from=

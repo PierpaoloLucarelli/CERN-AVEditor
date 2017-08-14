@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<div class="container" id="main">
+		<h1 class="title" id="page-title">AVEditor tool</h1>
+        {% if err is defined %}
+            <div class="warning">
+                {% for e in err %}
+                    {% for x in err[e] %}
+                        <h3 id="err-title">{{ e }}</h3>
+                        <p id=err-details"">{{ x }}</p>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if user %}
+            <div id="tool">
+                <form enctype=multipart/form-data action="/upload" id="file_upload" method="POST">
+                    {{ video_form.hidden_tag() }}
+                    {{ video_form.file() }}
+                    <label for="file">Choose a file</label>
+                    <br>
+                    <p id="video_err"></p>
+                    <div class="spinner_container" style="padding-top: 10px;">
+                        <p id="video_filename">Filename: <span></span></p>
+                        <div id="filename_loader" class="loader"></div><br>
+                    </div>
+                    <div class="spinner_container" style="padding-top: 10px;">
+                        <p id="video_resolution">Resolution: <span></span></p>
+                        <div id="resolution_loader" class="loader"></div><br>
+                    </div>
+                </form>
+                <div class="progress">
+                    <div class="progress-bar progress-bar-success myprogress" role="progressbar" style="width:0%">0%</div>
+                </div>
+                <form enctype=multipart/form-data action="/" id="video_details_form" method="POST">
+                    {{ form.hidden_tag() }}
+                    <div id="video_details">
+                        <!--will reveal other form inputs if clicked-->
+                        {{ form.crop_bool() }}
+                        <label>Crop this video?</label>
+                        <br>
+                        <div id="crop_times">
+                            <label>Start time (format HH:MM:SS)</label><br>
+                            {{ form.crop_start(value="00:00:00") }}<br>
+                            <label>Stop time (format HH:MM:SS)</label><br>
+                            <div class="spinner_container">
+                                {{ form.crop_end }}
+                                <div id="crop_end_loader" class="loader"></div><br>
+                            </div>
+                        </div>
+                        <div id="video_images">
+                            <div id="added_images">
+                                <div class="image_form" id="img0">
+                                    {% for img in form.images %}
+                                        <h3>Add an image</h3>
+                                        {{ img.img_upload(class_="img_upload")}}
+                                        <label class="img_upload_label" for="images-0-img_upload">Choose a file</label><br>
+                                        <p class="img_filename"></p>
+                                        <label style="margin-top: 10px">Duration (seconds)</label><br>
+                                        {{ img.duration(class_="img_upload_stop") }}<br>
+                                        <label style="margin-top: 10px">Type</label><br>
+                                        {{ img.slide_type(class_="type_radio") }}<br>
+                                        <button class="remove_img">X</button>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <button id="add_image_btn">Add image</button><br>
+                        </div>
+                    </div>
+                    <input type="submit" name="video_submit" id="video_submit">
+                </form>
+            </div>
+            <div id="job_submitted" style="display: none">
+                <h2>Your job is being processed, you will receive an email once it is completed</h2>
+            </div>
+        {% else %}
+            <div id="tool">
+                <h2>Please login to view this site</h2>
+            </div>
+        {% endif %}
+	</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='main.js') }}" type="text/javascript"></script>
+{% endblock %}
+

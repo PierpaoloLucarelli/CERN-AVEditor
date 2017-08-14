@@ -1,0 +1,265 @@
+apiVersion: v1
+kind: DeploymentConfig
+metadata:
+  name: aveditor
+  namespace: aveditor
+  selfLink: /oapi/v1/namespaces/aveditor/deploymentconfigs/aveditor
+  uid: c3ebfb69-5a71-11e7-9938-02163e015483
+  resourceVersion: '98521088'
+  generation: 137
+  creationTimestamp: '2017-06-26T13:17:12Z'
+  labels:
+    app: webapp
+  annotations:
+    openshift.io/generated-by: OpenShiftWebConsole
+spec:
+  strategy:
+    type: Rolling
+    rollingParams:
+      updatePeriodSeconds: 1
+      intervalSeconds: 1
+      timeoutSeconds: 600
+      maxUnavailable: 25%
+      maxSurge: 25%
+    resources: {}
+    activeDeadlineSeconds: 21600
+  triggers:
+    - type: ConfigChange
+      imageChangeParams:
+        containerNames:
+          - aveditor
+        from:
+          kind: ImageStreamTag
+          namespace: aveditor
+          name: 'aveditor:latest'
+        lastTriggeredImage: >-
+          172.30.78.46:5000/aveditor/aveditor@sha256:cb3ef6a4d361dab1144519609a990481f769a6fcae8d9c4f6126e072770539fd
+    - type: ConfigChange
+  replicas: 1
+  test: false
+  selector:
+    deploymentconfig: aveditor
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: aveditor
+        deploymentconfig: aveditor
+    spec:
+      volumes:
+        - name: aveditor
+          persistentVolumeClaim:
+            claimName: av-editor-storage
+        - name: volume-pgp8m
+          persistentVolumeClaim:
+            claimName: pvc-eos-hostpath
+        - name: eos-credentials
+          persistentVolumeClaim:
+            claimName: pvc-eos-credentials
+      containers:
+        - name: aveditor
+          image: '172.30.78.46:5000/aveditor/aveditor'
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: APP_MODULE
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: app.module
+            - name: FLASK_APP
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: app.flask_app
+            - name: UPLOADED_IMAGES_DEST
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: app.uploaded_images_dest
+            - name: UPLOADED_VIDEO_DEST
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: app.uploaded_video_dest
+            - name: UPLOADED_VIDEO_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: app.uploaded_video_url
+            - name: UPLOADS_DEFAULT_DEST
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: app.uploads_default_dest
+            - name: VIDEO_OUTPUT_DEST
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: app.video_output_dest
+            - name: SECRET_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: app.secret_key
+            - name: APP_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: app.port
+            - name: DEBUG
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: app.debug
+            - name: TESTING
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: app.testing
+            - name: DB_SERVICE
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: db.service
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: db.port
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: db.user
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: db.name
+            - name: DB_PASS
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: db.pass
+            - name: FFMPEG_BIN
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: ffmpeg.bin
+            - name: FFPROBE_BIN
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: ffmpeg.ffprobe_bin
+            - name: FFMPEG_FILE_FOLDER
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: ffmpeg.ffmpeg_file_folder
+            - name: SSH_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: ssh.server
+            - name: SSH_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: ssh.username
+            - name: SSH_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: ssh.key
+            - name: CERN_OAUTH_CLIENT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: auth.cern_oauth_client_id
+            - name: CERN_OAUTH_CLIENT_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: auth.cern_oauth_client_secret
+            - name: MAIL_HOSTNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: mail.hostname
+            - name: MAIL_FROM
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: mail.from
+            - name: HOSTNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-aveditor
+                  key: app.hostname
+          resources: {}
+          volumeMounts:
+            - name: aveditor
+              mountPath: /data
+            - name: volume-pgp8m
+              mountPath: /eos
+          livenessProbe:
+            exec:
+              command:
+                - bash
+                - '-c'
+                - stat /eos/user/m/micala
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          imagePullPolicy: Always
+        - name: eosclient-openshift
+          image: gitlab-registry.cern.ch/paas-tools/eosclient-openshift
+          env:
+            - name: KEYTAB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: keytab-secrets
+                  key: keytab-user
+            - name: KEYTAB_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: keytab-secrets
+                  key: keytab-pwd
+          resources: {}
+          volumeMounts:
+            - name: eos-credentials
+              mountPath: /var/run/eosd/credentials
+          terminationMessagePath: /dev/termination-log
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+status:
+  latestVersion: 96
+  observedGeneration: 137
+  replicas: 1
+  updatedReplicas: 1
+  availableReplicas: 1
+  unavailableReplicas: 0
+  details:
+    message: config change
+    causes:
+      - type: ConfigChange
+  conditions:
+    - type: Available
+      status: 'True'
+      lastUpdateTime: '2017-08-03T08:10:04Z'
+      lastTransitionTime: '2017-08-03T08:10:04Z'
+      message: Deployment config has minimum availability.
+    - type: Progressing
+      status: 'True'
+      lastUpdateTime: '2017-08-09T07:44:57Z'
+      lastTransitionTime: '2017-08-09T07:44:55Z'
+      reason: NewReplicationControllerAvailable
+      message: replication controller "aveditor-96" successfully rolled out
+  readyReplicas: 1

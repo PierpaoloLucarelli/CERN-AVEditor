@@ -1,0 +1,27 @@
+version: '2'
+services:
+  web:
+    restart: always
+    build: ./web
+    env_file: .env
+    ports:
+      - "8080:8080"
+    volumes:
+      - './web/app:/opt/app-root/app'
+      - './web/tests:/opt/app-root/tests'
+      - '/Volumes/transcode:/opt/app-root/uploads'
+      - '~/.ssh:/opt/app-root/src/.ssh'
+    command: python /opt/app-root/app/main.py
+    links:
+      - postgres
+    hostname: aveditor
+  data:
+    image: postgres:9.6
+    volumes:
+      - /var/lib/postgresql
+    command: "true"
+
+  postgres:
+    image: postgres:9.6
+    ports:
+        - 5432:5432

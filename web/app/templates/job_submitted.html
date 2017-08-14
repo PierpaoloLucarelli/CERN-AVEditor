@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<div class="container" id="main">
+		<h1 class="title" id="page-title">AVEditor tool</h1>
+        {% if err is defined %}
+            <div class="warning">
+                {% for e in err %}
+                    {% for x in err[e] %}
+                        <h3 id="err-title">{{ e }}</h3>
+                        <p id=err-details"">{{ x }}</p>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if user %}
+            <div id="tool">
+                <h2>Your job is being processed, you will receive an email once it is completed</h2>
+            </div>
+        {% else %}
+            <div id="tool">
+                <h2>Please login to view this site</h2>
+            </div>
+        {% endif %}
+	</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='main.js') }}" type="text/javascript"></script>
+{% endblock %}
+

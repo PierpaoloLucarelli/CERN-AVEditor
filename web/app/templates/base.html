@@ -1,0 +1,25 @@
+<html>
+  <head>
+      <meta name="csrf-token" content="{{ csrf_token() }}">
+      <link rel=stylesheet type=text/css href="{{ url_for('static', filename='reset.css') }}">
+      <link rel=stylesheet type=text/css href="{{ url_for('static', filename='toolbar.css') }}">
+      <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}"><link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon" />
+      <link href="https://fonts.googleapis.com/css?family=Work+Sans" rel="stylesheet">
+      <title>Webcast - AVEditor</title>
+  </head>
+  <body>
+    <div id="cern-toolbar">
+		<h1>
+			<a href="http://home.cern" title="CERN">CERN <span>Accelerating science</span></a>
+		</h1>
+        {% if user %}
+            {% include './nav-parts/loggedin.html' %}
+        {% else %}
+            {% include './nav-parts/loggedout.html' %}
+        {% endif %}
+	</div>
+    {% block content %}{% endblock %}
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+   {% block scripts %}{% endblock %}
+  </body>
+</html>
