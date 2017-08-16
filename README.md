@@ -1,7 +1,7 @@
 #
 Webcast: AVEditor
 
-[https://aveditor.web.cern.ch/](https://aveditor.web.cern.ch/)
+Original respository: [https://gitlab.cern.ch/webcast/AVEditor/tree/openshift](https://gitlab.cern.ch/webcast/AVEditor/tree/openshift)
 
 An automated video editing and encoding tool accessed though a web interface used for:
 
