@@ -158,10 +158,4 @@ ffmpeg -loop 1 -t 5 -i <intro_slide_path> -loop 1 -t 5 -i <outro_slide_path> -t 
 <output_video_path>
 ```
 
-## Future work
-
----
-
-1. Delete video from FS after download has been completed
-
 
